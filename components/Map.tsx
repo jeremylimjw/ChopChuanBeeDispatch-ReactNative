@@ -1,64 +1,24 @@
-import MapView, { LatLng, Marker, Polyline } from 'react-native-maps';
-import { Dimensions, Image, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import MapView, { Marker, Polyline } from 'react-native-maps';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import * as Location from 'expo-location';
-import { useEffect, useState } from 'react';
+import { useApp } from '../providers/AppProvider';
+import { LocationAccuracy } from 'expo-location';
 
 export default function Map({ markers, polylineCoords }: any) {
-
-    const styles = StyleSheet.create({
-      map: {
-        width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
-        },
-      circle: {
-        width: 15,
-        height: 15,
-        backgroundColor: "#1E90FF",
-        borderRadius: 50,
-        borderColor: "white",
-        borderWidth: 1
-      },
-      input: {
-        borderColor: "gray",
-        width: 500,
-        borderWidth: 1,
-        borderRadius: 10,
-        padding: 10,
-      },
-    });
+  const { currentPosition } = useApp();
 
     let mapView: MapView | null;
-    const [currentPosition, setCurrentPosition] = useState<LatLng | null>(null);
-
-    useEffect(() => {
-      (async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          console.log('Permission to access location was denied');
-          return;
-        }
-
-        Location.watchPositionAsync({}, location => {
-            let currentPosition = {
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude
-            };
-            setCurrentPosition(currentPosition);
-        })
-
-      })();
-    }, []);
 
     async function mapReady() {
-        let location = await Location.getCurrentPositionAsync({});
-        let region = {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.05,
-        };
+      let location = await Location.getCurrentPositionAsync({ accuracy: LocationAccuracy.High });
+      let region = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
+      };
 
-        mapView?.animateToRegion(region, 1000);
+      mapView?.animateToRegion(region, 1000);
     }
 
     return (
@@ -104,3 +64,25 @@ export default function Map({ markers, polylineCoords }: any) {
     )
 
 }
+
+const styles = StyleSheet.create({
+  map: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  },
+  circle: {
+    width: 15,
+    height: 15,
+    backgroundColor: "#1E90FF",
+    borderRadius: 50,
+    borderColor: "white",
+    borderWidth: 1
+  },
+  input: {
+    borderColor: "gray",
+    width: 500,
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 10,
+  },
+});

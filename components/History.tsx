@@ -1,4 +1,5 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import { Button } from "react-native-paper";
 import { useApp } from "../providers/AppProvider";
 
 
@@ -6,22 +7,9 @@ export default function History({ navigation }: any) {
     const { user } = useApp();
 
     return (
-      <View style={styles.container}>
-          <Text>History</Text>
-          <Button
-            title="Go to Home"
-            onPress={() => navigation.navigate('Home')}
-          />
-          <Button title="Go back" onPress={() => navigation.goBack()} />
-      </View>
+        <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
+            <Text>History</Text>
+            <Button mode="contained" onPress={() => navigation.goBack()}>Go back</Button>
+        </View>
     );
-  }
-  
-  const styles = StyleSheet.create({
-    container: {
-        width: '100%', 
-        padding: 20,
-        zIndex: 1,
-        backgroundColor: '#fff',
-    },
-  });
+}

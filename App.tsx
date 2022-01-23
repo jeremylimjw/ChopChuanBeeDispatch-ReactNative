@@ -1,14 +1,82 @@
 
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
-import { AppProvider, useApp } from './providers/AppProvider';
-import MyStack from './MyStack';
+import { useApp } from './providers/AppProvider';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+import Login from './components/Login';
+import History from './components/History';
+import MyRoute from './components/MyRoute';
+import Home from './components/Home';
+import NavigationBar from './components/NavigationBar';
+import SingleRoute from './components/SingleRoute';
 
 
 export default function App() {
+  const { user } = useApp();
+  const Stack = createStackNavigator();
+
+  const screens = [
+    {
+      name: "home",
+      component: Home,
+      options: { 
+        headerTitle: "Home",
+        header: (props: any) => {
+          return <NavigationBar {...props} />
+        }
+      },
+    }, 
+    {
+      name: "myRoute",
+      component: MyRoute,
+      options: { 
+        headerTitle: "My Route",
+        header: (props: any) => {
+          return <NavigationBar {...props} />
+        },
+        ...TransitionPresets.SlideFromRightIOS
+      },
+    }, 
+    {
+      name: "singleRoute",
+      component: SingleRoute,
+      options: { 
+        headerTitle: "Single Route",
+        header: (props: any) => {
+          return <NavigationBar {...props} />
+        },
+        ...TransitionPresets.SlideFromRightIOS
+      },
+    }, 
+    {
+      name: "history",
+      component: History,
+      options: { 
+        headerTitle: "History",
+        hideProfile: true,
+        header: (props: any) => {
+          return <NavigationBar {...props} />
+        },
+        ...TransitionPresets.ModalSlideFromBottomIOS,
+      },
+    }
+  ]
+
   return (
-    <AppProvider>
-      <MyStack />
-    </AppProvider>
+    <>
+      { user == null ?
+        <Login />
+        :
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Home">
+            {screens.map((screen, index: number) => 
+              <Stack.Screen key={index} name={screen.name} component={screen.component}
+                options={screen.options}/>
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      }
+    </>
   );
 }
 // <View style={styles.container}>
