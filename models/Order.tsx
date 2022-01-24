@@ -5,4 +5,6 @@ export interface Order {
     name: string;
     phoneNo: string;
     checked: boolean;
+    latitude: number;
+    longitude: number;
 }

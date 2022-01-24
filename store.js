@@ -5,6 +5,8 @@ export const orders = [
         address: "460 Ang Mo Kio Avenue 10",
         name: "Alice",
         phoneNo: "62252617",
+        latitude: 1.3736090497727795, 
+        longitude: 103.88518946181499,
     },
     {
         id: "2",
@@ -12,6 +14,8 @@ export const orders = [
         address: "Blk 678A Woodlands Ave 6 #01-15 S()",
         name: "Bob",
         phoneNo: "68939496",
+        latitude: 1.37147232091341,
+        longitude: 103.8874818279693,
     },
     {
         id: "3",
@@ -19,6 +23,8 @@ export const orders = [
         address: "5028 Ang Mo Kio Industrial Park 2 01-185",
         name: "Charlie",
         phoneNo: "67522637",
+        latitude: 1.3706786263306674, 
+        longitude: 103.88906967180883,
     },
     {
         id: "4",
@@ -26,6 +32,8 @@ export const orders = [
         address: "1033 Eunos Avenue 5A 01-19",
         name: "Desmond",
         phoneNo: "67522637",
+        latitude: 1.370065316700164,
+        longitude: 103.88932228332874,
     },
     {
         id: "5",
@@ -33,6 +41,8 @@ export const orders = [
         address: "Signode 2 Joo Koon Circle",
         name: "Eric",
         phoneNo: "67522637",
+        latitude: 1.368225386866866,
+        longitude: 103.89029664204843,
     },
     {
         id: "6",
@@ -40,6 +50,8 @@ export const orders = [
         address: "7 Keppel Road #02-18/20 Tanjong Pagar Complex",
         name: "Farhanah",
         phoneNo: "67522637",
+        latitude: 1.3689469281462576,
+        longitude: 103.88986359372856,
     },
     {
         id: "7",
@@ -47,6 +59,8 @@ export const orders = [
         address: "BLK 1012 EUNOS AVENUE 6 01-11/15",
         name: "Gerald",
         phoneNo: "67522637",
+        latitude: 1.3677563849188554,
+        longitude: 103.89076577772828,
     },
     {
         id: "8",
@@ -54,6 +68,8 @@ export const orders = [
         address: "Blk 502, Jelapang Road, ,02-386",
         name: "Howard",
         phoneNo: "67522637",
+        latitude: 1.3654113738045495,
+        longitude: 103.89065751564831,
     },
     {
         id: "9",
@@ -61,5 +77,7 @@ export const orders = [
         address: "8 Temasek Boulevard Suntec Tower Three",
         name: "Isacc",
         phoneNo: "67522637",
+        latitude: 1.3637879032312248,
+        longitude: 103.88921402124878,
     },
 ]

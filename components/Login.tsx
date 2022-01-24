@@ -29,7 +29,7 @@ export default function Login({ navigation }: any) {
 
       <Headline>Chop Chuan Bee</Headline>
 
-      <Avatar.Icon style={styles.icon} size={120} icon="van-utility" color="#3f51b5" />
+      <Avatar.Icon style={styles.icon} size={120} icon="van-utility" color="#808080" />
 
       <TextInput style={styles.input} 
         placeholder="Username" 

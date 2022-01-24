@@ -18,12 +18,13 @@ export function AppProvider({ children }: any) {
     const [orders, setOrders] = useState<Order[]>([]);
     const [optimizedOrders, setOptimizedOrders] = useState<Order[]>([]);
 
-    const [markers, setMarkers] = useState<any[]>([]);
-    const [polylineCoords, setPolylineCoords] = useState<number[][]>([]);
+    // const [markers, setMarkers] = useState<any[]>([]);
+    // const [polylineCoords, setPolylineCoords] = useState<number[][]>([]);
 
     const [currentPosition, setCurrentPosition] = useState<LatLng | null>(null);
 
     useEffect(() => {
+        // Setup location service
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
@@ -41,7 +42,7 @@ export function AppProvider({ children }: any) {
         })();
     }, []);
 
-
+    // Log in user and save into session
     function login(username: string, password: string) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -52,6 +53,7 @@ export function AppProvider({ children }: any) {
         });
     }
 
+    // Remove user from session
     function logout(): void {
         setOrders([]);
         setUser(null);

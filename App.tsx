@@ -5,10 +5,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import Login from './components/Login';
 import History from './components/History';
-import MyRoute from './components/MyRoute';
+import RouteOverview from './components/RouteOverview';
 import Home from './components/Home';
 import NavigationBar from './components/NavigationBar';
 import SingleRoute from './components/SingleRoute';
+import Profile from './components/Profile';
 
 
 export default function App() {
@@ -20,17 +21,17 @@ export default function App() {
       name: "home",
       component: Home,
       options: { 
-        headerTitle: "Home",
+        headerTitle: "Select Orders",
         header: (props: any) => {
           return <NavigationBar {...props} />
         }
       },
     }, 
     {
-      name: "myRoute",
-      component: MyRoute,
+      name: "routeOverview",
+      component: RouteOverview,
       options: { 
-        headerTitle: "My Route",
+        headerTitle: "Route Overview",
         header: (props: any) => {
           return <NavigationBar {...props} />
         },
@@ -40,19 +41,31 @@ export default function App() {
     {
       name: "singleRoute",
       component: SingleRoute,
-      options: { 
-        headerTitle: "Single Route",
+      options: ({ route }: any) => ({ 
+        headerTitle: route.params.order.company,
         header: (props: any) => {
           return <NavigationBar {...props} />
         },
-        ...TransitionPresets.SlideFromRightIOS
-      },
-    }, 
+        ...TransitionPresets.SlideFromRightIOS 
+      }),
+    },
     {
       name: "history",
       component: History,
       options: { 
         headerTitle: "History",
+        hideProfile: true,
+        header: (props: any) => {
+          return <NavigationBar {...props} />
+        },
+        ...TransitionPresets.ModalSlideFromBottomIOS,
+      },
+    }, 
+    {
+      name: "profile",
+      component: Profile,
+      options: { 
+        headerTitle: "Profile",
         hideProfile: true,
         header: (props: any) => {
           return <NavigationBar {...props} />

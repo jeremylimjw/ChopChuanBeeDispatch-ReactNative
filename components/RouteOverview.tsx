@@ -1,15 +1,13 @@
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 import { BottomNavigation, Card } from "react-native-paper";
 import { useApp } from "../providers/AppProvider";
 import { useState } from "react";
 import { Order } from "../models/Order";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import Map from "./Map";
 
 
-export default function MyRoute({ navigation }: any) {
-    const { user, orders } = useApp();
-
+export default function RouteOverview({ navigation }: any) {
     const [index, setIndex] = useState(0);
     const routes = [
       { key: 'mapOverview', title: 'Map Overview', icon: 'map-marker-distance' },
@@ -17,7 +15,7 @@ export default function MyRoute({ navigation }: any) {
     ];
 
     const renderScene = BottomNavigation.SceneMap({
-      mapOverview: RouteOverview,
+      mapOverview: MapOverview,
       viewList: () => RouteList(navigation),
     });
 
@@ -31,10 +29,18 @@ export default function MyRoute({ navigation }: any) {
   );
 }
 
-function RouteOverview() {
+function MapOverview() {
+  const { optimizedOrders } = useApp();
+
   return (
     <>
-      <Map markers={[]} polylineCoords={[]} />
+      <Map markers={optimizedOrders.map((order: Order) => {
+        return {
+          coordinates: { longitude: order.longitude, latitude: order.latitude },
+          title: order.company,
+          description: order.address
+        }
+      })} polylineCoords={[]} />
     </>
   )
 }
@@ -44,14 +50,16 @@ function RouteList(navigation : any) {
 
   return (
     <>
-      { optimizedOrders.map((order: Order, index: number) => 
-        <Card key={index} style={styles.listItem} onPress={() => navigation.navigate('singleRoute')}>
-          <Card.Title title={order.company} subtitle={order.address} 
-            left={() => 
-              <MaterialCommunityIcons name="subdirectory-arrow-right" size={34} color="#24307b" />
-            } />
-        </Card>
-      )}
+      <ScrollView>
+        { optimizedOrders.map((order: Order, index: number) => 
+          <Card key={index} style={styles.listItem} onPress={() => navigation.navigate('singleRoute', { order: order })}>
+            <Card.Title title={order.company} subtitle={order.address} 
+              left={() => 
+                <MaterialCommunityIcons name="subdirectory-arrow-right" size={34} color="#24307b" />
+              } />
+          </Card>
+        )}
+      </ScrollView>
     </>
   )
 }

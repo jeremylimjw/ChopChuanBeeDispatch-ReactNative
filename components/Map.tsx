@@ -1,53 +1,51 @@
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { Dimensions, StyleSheet, View } from 'react-native';
-import * as Location from 'expo-location';
 import { useApp } from '../providers/AppProvider';
-import { LocationAccuracy } from 'expo-location';
 
 export default function Map({ markers, polylineCoords }: any) {
   const { currentPosition } = useApp();
 
-    let mapView: MapView | null;
+  let mapView: MapView | null;
 
-    async function mapReady() {
-      let location = await Location.getCurrentPositionAsync({ accuracy: LocationAccuracy.High });
-      let region = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-      };
+  function panCameraTo(latitude: number, longitude: number) {
+    let region = {
+        latitude: latitude,
+        longitude: longitude,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+    };
 
-      mapView?.animateToRegion(region, 1000);
-    }
+    mapView?.animateToRegion(region, 1000);
+  }
 
-    return (
-        <>
+  return (
+      <>
+        { currentPosition != null &&
           <MapView 
               ref={ref => { if (ref != null) mapView = ref }}
               style={styles.map}
               initialRegion={{
-                  latitude: 1.3559744755561935,
-                  longitude: 103.81716048029581,
-                  latitudeDelta: 0.1,
-                  longitudeDelta: 0.1,
+                  // latitude: 1.3559744755561935,
+                  // longitude: 103.81716048029581,
+                  latitude: currentPosition.latitude,
+                  longitude: currentPosition.longitude,
+                  latitudeDelta: 0.025,
+                  longitudeDelta: 0.025,
               }}
-              onMapReady={mapReady}
           >
               
-            {markers.map((marker: any, index: number) => (
-                <Marker
-                    key={index}
-                    coordinate={marker.coordinates}
-                    title={marker.title}
-                    description={marker.description}
-                />
-            ))}
+            { markers.map((marker: any, index: number) =>
+              <Marker key={index}
+                coordinate={marker.coordinates}
+                title={marker.title}
+                description={marker.description}
+              />
+            )}
 
 
             {currentPosition != null && 
                 <Marker coordinate={currentPosition}>
-                    <View style={styles.circle} />
+                  <View style={styles.circle} />
                 </Marker>
             }
 
@@ -60,8 +58,9 @@ export default function Map({ markers, polylineCoords }: any) {
             } 
 
           </MapView>
-        </>
-    )
+        }
+      </>
+  )
 
 }
 

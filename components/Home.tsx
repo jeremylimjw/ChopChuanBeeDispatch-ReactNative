@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, View, Text, RefreshControl } from "react-native";
 import { useApp } from "../providers/AppProvider";
-import { Button, Card, Checkbox, TouchableRipple } from 'react-native-paper';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ActivityIndicator, Button, Card, Checkbox, TouchableRipple } from 'react-native-paper';
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { Order } from "../models/Order";
 import { useCallback, useEffect, useState } from "react";
 import { orders as tempStore } from "../store";
@@ -13,6 +13,7 @@ export default function Home({ navigation }: any) {
 
   const [refreshing, setRefreshing] = useState(false);
   const [checkAll, setCheckAll] = useState(true);
+  const [optimizing, setOptimizing] = useState(false);
 
   useEffect(() => {
     setRefreshing(true);
@@ -72,24 +73,28 @@ export default function Home({ navigation }: any) {
 
   // Handle "Optimize" button press event
   function handleOptimizePressEvent(): void {
+    setOptimizing(true);
     const selectedOrders = orders.filter((order: Order) => order.checked);
 
-    // traveling salesman algo here
+    setTimeout(() => {
+      // traveling salesman algo here
+  
+      setOptimizedOrders(selectedOrders)
+      setOptimizing(false);
+  
+      navigation.navigate('routeOverview');
+    }, 2000)
 
-    setOptimizedOrders(selectedOrders)
-
-    navigation.navigate('myRoute');
   }
 
   return (
     <>
-      { orders.length !== 0 && 
-        <Button labelStyle={{ color: 'black' }} mode="outlined" style={styles.listItem} onPress={handleSelectAllPressEvent}>
-          {checkAll ? "Select All" : "Unselect All" }
-        </Button>
-      }
-
       <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleSwipeRefreshEvent} />}>
+        { orders.length !== 0 && 
+          <Button labelStyle={{ color: 'black' }} mode="outlined" style={styles.listItem} onPress={handleSelectAllPressEvent}>
+            {checkAll ? "Select All" : "Unselect All" }
+          </Button>
+        }
 
         { orders.map((order: Order, i: number)=> 
           <Card key={i} style={styles.listItem} onPress={() => handleCheckBoxPressEvent(order, !order.checked)}>
@@ -102,13 +107,10 @@ export default function Home({ navigation }: any) {
       </ScrollView>
 
       <View style={styles.bottomBar}>
-
-        <Button color="#3f51b5" labelStyle={{ color: 'white' }} mode="contained" 
-          onPress={handleOptimizePressEvent} disabled={orders.filter((order: Order) => order.checked).length === 0}>
-          <MaterialCommunityIcons name="sync" size={28} />
-          <Text style={{ fontSize: 24 }}> Optimize</Text>
+        <Button color="#3f51b5" style={styles.optimizeButton} labelStyle={{ color: 'white' }} mode="contained" loading={optimizing} icon="sync"
+          onPress={handleOptimizePressEvent} disabled={orders.filter((order: Order) => order.checked).length === 0 || optimizing}>
+          Optimize Route
         </Button>
-
       </View>
     </>
   );
@@ -124,5 +126,9 @@ const styles = StyleSheet.create({
     height: 60, 
     paddingTop: 5, 
     margin: 10,
+  },
+  optimizeButton: {
+    height: "100%", 
+    padding: 8,
   }
 });
