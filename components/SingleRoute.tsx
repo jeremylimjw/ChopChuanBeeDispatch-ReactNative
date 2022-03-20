@@ -2,14 +2,15 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Map from './Map';
 import Slider from 'react-native-slide-to-unlock';
-import { Avatar, Caption, Headline, Paragraph, Subheading, Text, Title } from 'react-native-paper';
+import { Avatar, Caption, Paragraph } from 'react-native-paper';
 import { DeliveryOrder } from '../models/DeliveryOrder';
 import { useApp } from '../providers/AppProvider';
 import { DeliveryStatus } from '../enums/DeliveryStatus';
+import { httpCompleteOrder } from '../api/delivery';
 
 
 export default function SingleRoute({ route, navigation }: any) {
-    const { updateDeliveryOrder } = useApp();
+    const { updateDeliveryOrder, currentPosition, handleHttpError } = useApp();
     
     const order: DeliveryOrder = route.params.order;
 
@@ -20,9 +21,12 @@ export default function SingleRoute({ route, navigation }: any) {
     }
 
     function handleSwipeGesture() {
-        // send HTTP request here
-        updateDeliveryOrder({...order, delivery_status_id: DeliveryStatus.COMPLETED.id });
-        navigation.goBack();
+        httpCompleteOrder(order.id)
+            .then(() => {
+                updateDeliveryOrder({...order, delivery_status_id: DeliveryStatus.COMPLETED.id });
+                navigation.goBack();
+            })
+            .catch(handleHttpError);
     }
 
     return (
@@ -32,7 +36,14 @@ export default function SingleRoute({ route, navigation }: any) {
                     <Caption style={styles.caption}>{order.remarks}</Caption>
                 </View>
             }
-            <Map markers={[destination]} polylineCoords={[]} />
+            <Map 
+                markers={[destination]} 
+                directions={{
+                    origin: { longitude: +currentPosition?.longitude, latitude: +currentPosition?.latitude },
+                    destination: { longitude: +order?.longitude, latitude: +order?.latitude },
+                    waypoints: []
+                }}
+            />
             <View style={styles.footer}>
                 { order.delivery_status_id !== DeliveryStatus.COMPLETED.id && 
                     <Slider containerStyle={styles.swipeContainer}

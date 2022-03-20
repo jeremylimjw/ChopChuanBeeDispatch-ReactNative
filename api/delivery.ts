@@ -6,11 +6,11 @@ export async function httpGetItinerarys(employeeId: string): Promise<any> {
 }
 
 export async function httpCompleteOrder(deliveryOrderId: string): Promise<any> {
-    return axiosWrapper.post(`/dispatch/deliveryOrder/complete`, { params: { id: deliveryOrderId } })
+    return axiosWrapper.post(`/dispatch/deliveryOrder/complete`, { id: deliveryOrderId })
         .then(res => res.data);
 }
 
 export async function httpUnassignOrder(deliveryOrderId: string): Promise<any> {
-    return axiosWrapper.post(`/dispatch/deliveryOrder/unassign`, { params: { id: deliveryOrderId } })
+    return axiosWrapper.post(`/dispatch/deliveryOrder/unassign`, { id: deliveryOrderId })
         .then(res => res.data);
 }

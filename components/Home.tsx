@@ -45,13 +45,6 @@ export default function Home({ navigation }: any) {
         )}
 
       </ScrollView>
-
-      {/* <View style={styles.bottomBar}>
-        <Button color="#3f51b5" style={styles.optimizeButton} labelStyle={{ color: 'white' }} mode="contained" loading={optimizing} icon="sync"
-          onPress={handleOptimizePressEvent} disabled={orders.filter((order: DeliveryOrder) => order.checked).length === 0 || optimizing}>
-          Optimize Route
-        </Button>
-      </View> */}
     </>
   );
 }
@@ -61,11 +54,6 @@ const styles = StyleSheet.create({
     marginTop: 8, 
     marginLeft: 8, 
     marginRight: 8,
-  },
-  bottomBar: {
-    height: 60, 
-    paddingTop: 5, 
-    margin: 10,
   },
   optimizeButton: {
     height: "100%", 

@@ -23,7 +23,6 @@ export default function NavigationBar({ navigation, back, options }: any) {
             <Appbar.Action icon="account" onPress={openMenu} />
           }>
           <Menu.Item onPress={() => { navigation.navigate('profile'); setVisible(false) }} title="My profile" />
-          <Menu.Item onPress={() => { navigation.navigate('history'); setVisible(false) }} title="History" />
           <Menu.Item onPress={logout} title="Logout" />
         </Menu>
       }

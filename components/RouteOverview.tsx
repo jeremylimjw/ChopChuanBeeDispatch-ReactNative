@@ -1,11 +1,12 @@
-import { Dimensions, Linking, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Appbar, BottomNavigation, Button, Card, IconButton, Menu } from "react-native-paper";
+import { Dimensions, Linking, Platform, ScrollView, StyleSheet } from "react-native";
+import { Appbar, BottomNavigation, Card, Menu } from "react-native-paper";
 import { useState } from "react";
 import { DeliveryOrder } from "../models/DeliveryOrder";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import Map from "./Map";
 import { useApp } from "../providers/AppProvider";
 import { DeliveryStatus } from "../enums/DeliveryStatus";
+import { httpUnassignOrder } from "../api/delivery";
 
 
 export default function RouteOverview({ route, navigation }: any) {
@@ -18,7 +19,7 @@ export default function RouteOverview({ route, navigation }: any) {
   ];
 
   const renderScene = BottomNavigation.SceneMap({
-    mapOverview: () => <MapOverview itinerary={itinerary} navigation={navigation} />,
+    mapOverview: () => <MapOverview itinerary={itinerary} />,
     viewList: () => <RouteList itinerary={itinerary} navigation={navigation} />,
   });
 
@@ -32,7 +33,7 @@ export default function RouteOverview({ route, navigation }: any) {
   );
 }
 
-function MapOverview({ itinerary, navigation }: any) {
+function MapOverview({ itinerary }: any) {
 
   return (
     <>
@@ -55,7 +56,7 @@ function MapOverview({ itinerary, navigation }: any) {
 }
 
 function RouteList({ itinerary, navigation }: any) {
-  const { removeDeliveryOrder } = useApp();
+  const { removeDeliveryOrder, handleHttpError } = useApp();
 
   function renderMenu(order: DeliveryOrder) {
     const [visible, setVisible] = useState(false);
@@ -74,9 +75,12 @@ function RouteList({ itinerary, navigation }: any) {
     }
 
     function unassignOrder(order: DeliveryOrder): void {
-      // send HTTP request here
-      removeDeliveryOrder(order);
-      setVisible(false);
+      httpUnassignOrder(order.id)
+        .then(() => {
+          removeDeliveryOrder(order);
+          setVisible(false);
+        })
+        .catch(handleHttpError);
     }
 
     function onPress() {
