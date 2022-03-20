@@ -1,0 +1,53 @@
+export interface DeliveryOrder {
+    id: string;
+    deliver_at?: Date;
+    delivery_status_id: number;
+    itinerary_id: string;
+    latitude: number;
+    longitude: number;
+    address: string;
+    postal_code: string;
+    qr_code: any;
+    remarks: string;
+    sales_order?: {
+        id: string;
+        charged_under_id: string;
+        closed_on?: Date | null;
+        customer: {
+            id: string;
+            address: string;
+            charged_under_id: string;
+            company_email: string;
+            company_name: string;
+            deactivated_date: Date | null;
+            description: string;
+            gst_show: boolean;
+            p1_name: string;
+            p1_phone_number: string;
+            p2_name: string | null;
+            p2_phone_number: string | null;
+            postal_code: string;
+            created_at: Date;
+            updated_at: Date;
+        };
+        customer_id: string;
+        delivery_address: string;
+        delivery_postal_code: string;
+        delivery_remarks: string | null;
+        gst_rate: number;
+        has_delivery: boolean;
+        has_gst: number;
+        offset: number;
+        payment_method_id: number;
+        payment_term_id: number;
+        remarks: string | null;
+        sales_order_status_id: number;
+        show_gst: boolean;
+        created_at: Date;
+        updated_at: Date;
+    } | null;
+    sales_order_id?: number | null;
+    sequence: number;
+    created_at: Date;
+    updated_at: Date;
+}

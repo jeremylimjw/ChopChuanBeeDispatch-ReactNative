@@ -21,7 +21,7 @@ export default function App() {
       name: "home",
       component: Home,
       options: { 
-        headerTitle: "Select Orders",
+        headerTitle: "My Itineraries",
         header: (props: any) => {
           return <NavigationBar {...props} />
         }
@@ -31,7 +31,7 @@ export default function App() {
       name: "routeOverview",
       component: RouteOverview,
       options: { 
-        headerTitle: "Route Overview",
+        headerTitle: "Itinerary Overview",
         header: (props: any) => {
           return <NavigationBar {...props} />
         },
@@ -42,7 +42,7 @@ export default function App() {
       name: "singleRoute",
       component: SingleRoute,
       options: ({ route }: any) => ({ 
-        headerTitle: route.params.order.company,
+        headerTitle: route.params.order.sales_order?.customer.company_name || 'Custom Order',
         header: (props: any) => {
           return <NavigationBar {...props} />
         },

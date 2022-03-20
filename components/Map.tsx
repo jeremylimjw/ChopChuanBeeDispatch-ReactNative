@@ -1,8 +1,12 @@
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import { useApp } from '../providers/AppProvider';
+import MapViewDirections from 'react-native-maps-directions';
 
-export default function Map({ markers, polylineCoords }: any) {
+const GOOGLE_MAPS_APIKEY = 'AIzaSyDnOE-lFQV3l5JWLE9bRnMiv1Ext8puGsY';
+
+
+export default function Map({ markers, directions }: any) {
   const { currentPosition } = useApp();
 
   let mapView: MapView | null;
@@ -44,18 +48,21 @@ export default function Map({ markers, polylineCoords }: any) {
 
 
             {currentPosition != null && 
-                <Marker coordinate={currentPosition}>
-                  <View style={styles.circle} />
-                </Marker>
+              <Marker coordinate={currentPosition}>
+                <View style={styles.circle} />
+              </Marker>
             }
 
-            { polylineCoords.length !== 0 && 
-              <Polyline
-                coordinates={polylineCoords}
-                strokeColor="#6495ED" // fallback for when `strokeColors` is not supported by the map-provider
+            {directions && 
+              <MapViewDirections
+                origin={directions.origin}
+                destination={directions.destination}
+                waypoints={directions.waypoints}
+                strokeColor="#6495ED"
                 strokeWidth={6}
+                apikey={GOOGLE_MAPS_APIKEY}
               />
-            } 
+            }
 
           </MapView>
         }

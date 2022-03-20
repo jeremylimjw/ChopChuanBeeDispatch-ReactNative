@@ -1,25 +1,26 @@
 import { useState } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 import { Button, Headline, Avatar, Caption } from "react-native-paper";
-import { User } from "../models/User";
 import { useApp } from "../providers/AppProvider";
 
 
 export default function Login({ navigation }: any) {
-  const { login } = useApp();
+  const { login, handleHttpError } = useApp();
 
-  const [form, setForm] = useState({ username: "alice", password: "password" });
+  const [form, setForm] = useState({ 
+    username: "mariadavis", 
+    password: "password" 
+  });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  function onSubmit() {
+  async function onSubmit() {
     setSubmitting(true);
 
     login(form.username, form.password)
-      .then((user: User) => {
-      })
+      .catch(handleHttpError)
       .catch((err: any) => {
-        setError(err);
+        setError(err.message);
         setSubmitting(false);
       });
   }
