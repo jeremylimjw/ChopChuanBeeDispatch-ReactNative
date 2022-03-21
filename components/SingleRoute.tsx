@@ -2,15 +2,15 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Map from './Map';
 import Slider from 'react-native-slide-to-unlock';
-import { Avatar, Caption, Paragraph } from 'react-native-paper';
+import { Avatar, Caption, FAB, Paragraph } from 'react-native-paper';
 import { DeliveryOrder } from '../models/DeliveryOrder';
 import { useApp } from '../providers/AppProvider';
 import { DeliveryStatus } from '../enums/DeliveryStatus';
-import { httpCompleteOrder } from '../api/delivery';
+import { redirectToMaps } from '../utilities/externalLink';
 
 
 export default function SingleRoute({ route, navigation }: any) {
-    const { updateDeliveryOrder, currentPosition, handleHttpError } = useApp();
+    const { completeOrder, confirmCancelOrder, currentPosition } = useApp();
     
     const order: DeliveryOrder = route.params.order;
 
@@ -21,13 +21,20 @@ export default function SingleRoute({ route, navigation }: any) {
     }
 
     function handleSwipeGesture() {
-        httpCompleteOrder(order.id)
+        completeOrder(order)
             .then(() => {
-                updateDeliveryOrder({...order, delivery_status_id: DeliveryStatus.COMPLETED.id });
-                navigation.goBack();
+                navigation.goBack(); // TODO: get itienrary, find, open next delivery
             })
-            .catch(handleHttpError);
+            .catch(console.log);
     }
+
+    function handleCancelOrder(order: DeliveryOrder): void {
+        confirmCancelOrder(order, (event: string, err: any, success: any) => {
+            if (event === 'OK') {
+                navigation.goBack();
+            }
+        })
+      }
 
     return (
         <>
@@ -44,14 +51,26 @@ export default function SingleRoute({ route, navigation }: any) {
                     waypoints: []
                 }}
             />
+
             <View style={styles.footer}>
-                { order.delivery_status_id !== DeliveryStatus.COMPLETED.id && 
-                    <Slider containerStyle={styles.swipeContainer}
-                        onEndReached={handleSwipeGesture}
-                        sliderElement={<Avatar.Icon size={68} icon="chevron-right"  />}>
-                        <Paragraph>COMPLETED</Paragraph>
-                    </Slider>
-                }
+                
+                <View style={{ display: 'flex', alignItems: 'flex-end' }}>
+                    { order.delivery_status_id !== DeliveryStatus.COMPLETED.id  && 
+                        <FAB style={styles.fab} icon="close" onPress={() => handleCancelOrder(order)} />
+                    }
+                    <FAB style={styles.fab} icon="map-marker-radius" onPress={() => redirectToMaps(order)}/>
+                    <FAB style={styles.fab} icon="file-document-outline" onPress={() => navigation.navigate('orderDetails', { order: order })} />
+                </View>
+                
+                <View style={styles.swipeContainer}>
+                    { order.delivery_status_id !== DeliveryStatus.COMPLETED.id && 
+                        <Slider containerStyle={styles.slider}
+                            onEndReached={handleSwipeGesture}
+                            sliderElement={<Avatar.Icon size={68} icon="chevron-right"  />}>
+                            <Paragraph>COMPLETED</Paragraph>
+                        </Slider>
+                    }
+                </View>
             </View>
         </>
     )
@@ -70,13 +89,16 @@ const styles = StyleSheet.create({
     },
     footer: {
         position: "absolute", 
+        width: "100%",
         bottom: 0, 
         left: 0,
+    },
+    swipeContainer:  {
         backgroundColor: "#FFF",
         width: "100%",
         padding: 2,
     },
-    swipeContainer:  {
+    slider:  {
         margin: 8,
         backgroundColor: '#c3c3c3',
         borderRadius: 50,
@@ -85,5 +107,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         width: '95%',
         padding: 3,
+    },
+    fab: {
+        backgroundColor: "#FFF",
+        width: 55,
+        marginBottom: 25,
+        marginRight: 20,
     },
 })

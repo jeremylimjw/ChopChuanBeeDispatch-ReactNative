@@ -1,4 +1,4 @@
-import { Dimensions, Linking, Platform, ScrollView, StyleSheet } from "react-native";
+import { Dimensions, ScrollView, StyleSheet } from "react-native";
 import { Appbar, BottomNavigation, Card, Menu } from "react-native-paper";
 import { useState } from "react";
 import { DeliveryOrder } from "../models/DeliveryOrder";
@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Map from "./Map";
 import { useApp } from "../providers/AppProvider";
 import { DeliveryStatus } from "../enums/DeliveryStatus";
-import { httpUnassignOrder } from "../api/delivery";
+import { redirectToMaps } from "../utilities/externalLink";
 
 
 export default function RouteOverview({ route, navigation }: any) {
@@ -56,49 +56,37 @@ function MapOverview({ itinerary }: any) {
 }
 
 function RouteList({ itinerary, navigation }: any) {
-  const { removeDeliveryOrder, handleHttpError } = useApp();
+  const { confirmCompleteOrder, confirmCancelOrder } = useApp();
 
   function renderMenu(order: DeliveryOrder) {
     const [visible, setVisible] = useState(false);
 
     function openInMaps(order: DeliveryOrder): void {
-      const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
-      const latLng = `${order.latitude},${order.longitude}`;
-      const label = '';
-      const url = Platform.select({
-        ios: `${scheme}${label}@${latLng}`,
-        android: `${scheme}${latLng}(${label})`
-      });
       setVisible(false);
-  
-      Linking.openURL(url!);
+      redirectToMaps(order);
     }
 
-    function unassignOrder(order: DeliveryOrder): void {
-      httpUnassignOrder(order.id)
-        .then(() => {
-          removeDeliveryOrder(order);
-          setVisible(false);
-        })
-        .catch(handleHttpError);
+    function viewOrderDetails(order: DeliveryOrder): void {
+      navigation.navigate('orderDetails', { order: order });
+      setVisible(false);
     }
 
-    function onPress() {
-      if (order.delivery_status_id === DeliveryStatus.COMPLETED.id) {
-        return;
-      }
-      setVisible(true);
+    function handleCompleteOrder(order: DeliveryOrder): void {
+      setVisible(false);
+      confirmCompleteOrder(order, (event: string, err: any, success: any) => { })
+    }
+
+    function handleCancelOrder(order: DeliveryOrder): void {
+      setVisible(false);
+      confirmCancelOrder(order, (event: string, err: any, success: any) => { })
     }
 
     return (
-      <Menu
-        visible={visible}
-        onDismiss={() => setVisible(false)}
-        anchor={
-          <Appbar.Action icon="dots-vertical" onPress={onPress}/>
-        }>
-        <Menu.Item onPress={() => unassignOrder(order)} title="Unassign" />
-        <Menu.Item onPress={() => openInMaps(order)} title="Open in Maps" />
+      <Menu visible={visible} onDismiss={() => setVisible(false)} anchor={<Appbar.Action icon="dots-vertical" onPress={() => setVisible(true)}/>}>
+        <Menu.Item icon="map-marker-radius" onPress={() => openInMaps(order)} title="Open in Maps" />
+        <Menu.Item icon="file-document-outline" onPress={() => viewOrderDetails(order)} title="View Details" />
+        <Menu.Item icon="check" onPress={() => handleCompleteOrder(order)} title="Mark as Complete" disabled={order.delivery_status_id === DeliveryStatus.COMPLETED.id} />
+        <Menu.Item icon="close" onPress={() => handleCancelOrder(order)} title="Mark as Fail" disabled={order.delivery_status_id === DeliveryStatus.COMPLETED.id} />
       </Menu>
     )
   }

@@ -27,8 +27,6 @@ export default function Profile({ navigation }: any) {
         <Paragraph style={styles.centerText}>{user.email || '-'}</Paragraph>
       </View>
       
-      <Button style={styles.button} mode="contained" onPress={() => navigation.goBack()}>Back</Button>
-      
     </View>
   );
 }
@@ -54,8 +52,4 @@ const styles = StyleSheet.create({
   centerText: {
     textAlign: 'center',
   },
-  button: {
-    marginTop: 20,
-    width: 180,
-  }
 });

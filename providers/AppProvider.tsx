@@ -7,6 +7,9 @@ import { LocationAccuracy } from "expo-location";
 import { httpLogin, httpLogout } from "../api/auth";
 import { Itinerary } from "../models/Itinerary";
 import { DeliveryOrder } from "../models/DeliveryOrder";
+import { Alert } from "react-native";
+import { httpCompleteOrder, httpUnassignOrder } from "../api/delivery";
+import { DeliveryStatus } from "../enums/DeliveryStatus";
 
 const AppContext = createContext<any>(null);
 
@@ -123,12 +126,76 @@ export function AppProvider({ children }: any) {
         setItinerarys(newItinerarys);
     }
 
+
+    // Complete order with confirmation
+    function confirmCompleteOrder(order: DeliveryOrder, myCallback: (event: string, err?: any, success?: any) => void): void {
+      Alert.alert(
+        "Confirm Mark Order as Complete",
+        "This action cannot be undone.",
+        [
+            {
+                text: "Cancel",
+                style: "cancel",
+                onPress: () => myCallback('CLOSE'),
+            },
+            { 
+                text: "OK", 
+                onPress: () => {
+                    completeOrder(order)
+                        .then(() => myCallback('OK'))
+                        .catch(err => myCallback('OK', err));
+                }
+            }
+        ]
+      );
+    }
+
+    // Complete order
+    async function completeOrder(order: DeliveryOrder): Promise<void> {
+        return httpCompleteOrder(order.id)
+            .then(() => updateDeliveryOrder({...order, delivery_status_id: DeliveryStatus.COMPLETED.id }))
+            .catch(handleHttpError)
+    }
+
+    
+    // Cancel order with confirmation
+    function confirmCancelOrder(order: DeliveryOrder, myCallback: (event: string, err?: any, success?: any) => void): void {
+        Alert.alert(
+            "Confirm Mark Order as Failed",
+            "This order will be removed from the itinerary to be re-assigned. This action cannot be undone.",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel",
+                    onPress: () => myCallback('CLOSE'),
+                },
+                { 
+                    text: "OK", 
+                    onPress: () => {
+                        cancelOrder(order)
+                            .then(() => myCallback('OK'))
+                            .catch(err => myCallback('OK', err));
+                    }
+                }
+            ]
+        );
+    }
+
+    // Cancel order
+    async function cancelOrder(order: DeliveryOrder): Promise<void> {
+        return httpUnassignOrder(order.id)
+            .then(() => removeDeliveryOrder(order))
+            .catch(handleHttpError)
+    }
+
     const value: any = { 
         user, login, logout, handleHttpError,
         currentPosition, setCurrentPosition, 
         itinerarys, setItinerarys, 
         updateDeliveryOrder, 
-        removeDeliveryOrder 
+        removeDeliveryOrder,
+        confirmCompleteOrder, completeOrder,
+        confirmCancelOrder, cancelOrder,
     }
 
     return (

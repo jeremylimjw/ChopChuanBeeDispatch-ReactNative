@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { httpGetItinerarys } from "../api/delivery";
 import { Itinerary } from "../models/Itinerary";
 import { parseDateTime, parseDateTimeSeconds } from "../utilities/datetime";
+import { DeliveryStatus } from "../enums/DeliveryStatus";
 
 
 export default function Home({ navigation }: any) {
@@ -35,12 +36,25 @@ export default function Home({ navigation }: any) {
     retrieveAllOrders();
   }, [retrieveAllOrders]);
 
+  function isCompleted(itinerary: Itinerary): boolean {
+    for (let delivery_order of itinerary.delivery_orders) {
+        if (delivery_order.delivery_status_id !== DeliveryStatus.COMPLETED.id) {
+          return false;
+        }
+    }
+    return true;
+  }
+
   return (
     <>
       <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={retrieveAllOrders} />}>
         { itinerarys.map((itinerary: Itinerary, i: number)=> 
           <Card key={i} style={styles.listItem} onPress={() => navigation.navigate('routeOverview', { itinerary: itinerary })}>
-            <Card.Title title={parseDateTime(itinerary.start_time)} subtitle={"Created at: " + parseDateTimeSeconds(itinerary.created_at)} />
+            <Card.Title 
+              style={{ opacity: isCompleted(itinerary) ? 0.3 : 1 }}
+              title={parseDateTime(itinerary.start_time)} 
+              subtitle={"Created at: " + parseDateTimeSeconds(itinerary.created_at)} 
+            />
           </Card>
         )}
 

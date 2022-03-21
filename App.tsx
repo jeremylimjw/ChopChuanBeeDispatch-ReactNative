@@ -4,7 +4,7 @@ import { useApp } from './providers/AppProvider';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import Login from './components/Login';
-import History from './components/History';
+import OrderDetails from './components/OrderDetails';
 import RouteOverview from './components/RouteOverview';
 import Home from './components/Home';
 import NavigationBar from './components/NavigationBar';
@@ -50,10 +50,10 @@ export default function App() {
       }),
     },
     {
-      name: "history",
-      component: History,
+      name: "orderDetails",
+      component: OrderDetails,
       options: { 
-        headerTitle: "History",
+        headerTitle: "View Order Details",
         hideProfile: true,
         header: (props: any) => {
           return <NavigationBar {...props} />
@@ -92,22 +92,3 @@ export default function App() {
     </>
   );
 }
-// <View style={styles.container}>
-// <StatusBar backgroundColor="black" style='light' />
-// <Topbar setMarkers={setMarkers} setPolylineCoords={setPolylineCoords} />
-// <Map markers={markers} polylineCoords={polylineCoords} />
-// <Footer />
-// </View>
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  map: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-  },
-});
