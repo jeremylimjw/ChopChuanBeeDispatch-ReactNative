@@ -8,7 +8,7 @@ import { httpLogin, httpLogout } from "../api/auth";
 import { Itinerary } from "../models/Itinerary";
 import { DeliveryOrder } from "../models/DeliveryOrder";
 import { Alert } from "react-native";
-import { httpCompleteOrder, httpUnassignOrder } from "../api/delivery";
+import { httpCompleteOrder, httpRecordOrderSignature, httpUnassignOrder } from "../api/delivery";
 import { DeliveryStatus } from "../enums/DeliveryStatus";
 
 const AppContext = createContext<any>(null);
@@ -110,7 +110,7 @@ export function AppProvider({ children }: any) {
         if (index < 0) return;
         const indexDO = newItinerarys[index].delivery_orders.findIndex((x: DeliveryOrder) => x.id === newDeliveryOrder.id);
         if (indexDO < 0) return;
-        newItinerarys[index].delivery_orders[indexDO] = {...newDeliveryOrder};
+        newItinerarys[index].delivery_orders[indexDO] = {...newItinerarys[index].delivery_orders[indexDO], ...newDeliveryOrder};
 
         setItinerarys(newItinerarys);
     }
@@ -129,25 +129,25 @@ export function AppProvider({ children }: any) {
 
     // Complete order with confirmation
     function confirmCompleteOrder(order: DeliveryOrder, myCallback: (event: string, err?: any, success?: any) => void): void {
-      Alert.alert(
-        "Confirm Mark Order as Complete",
-        "This action cannot be undone.",
-        [
-            {
-                text: "Cancel",
-                style: "cancel",
-                onPress: () => myCallback('CLOSE'),
-            },
-            { 
-                text: "OK", 
-                onPress: () => {
-                    completeOrder(order)
-                        .then(() => myCallback('OK'))
-                        .catch(err => myCallback('OK', err));
+        Alert.alert(
+            "Confirm Mark Order as Complete",
+            "This action cannot be undone.",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel",
+                    onPress: () => myCallback('CLOSE'),
+                },
+                { 
+                    text: "OK", 
+                    onPress: () => {
+                        completeOrder(order)
+                            .then(() => myCallback('OK'))
+                            .catch(err => myCallback('OK', err));
+                    }
                 }
-            }
-        ]
-      );
+            ]
+        );
     }
 
     // Complete order
@@ -185,7 +185,14 @@ export function AppProvider({ children }: any) {
     async function cancelOrder(order: DeliveryOrder): Promise<void> {
         return httpUnassignOrder(order.id)
             .then(() => removeDeliveryOrder(order))
-            .catch(handleHttpError)
+                .catch(handleHttpError)
+    }
+
+    // Record delivery order signature
+    async function recordSignature(order: DeliveryOrder, signature: string): Promise<void> {
+        return httpRecordOrderSignature(order.id, signature)
+            .then(() => updateDeliveryOrder({...order, signature: signature }))
+                .catch(handleHttpError)
     }
 
     const value: any = { 
@@ -196,6 +203,7 @@ export function AppProvider({ children }: any) {
         removeDeliveryOrder,
         confirmCompleteOrder, completeOrder,
         confirmCancelOrder, cancelOrder,
+        recordSignature,
     }
 
     return (

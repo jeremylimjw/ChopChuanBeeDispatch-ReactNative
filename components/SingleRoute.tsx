@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Map from './Map';
 import Slider from 'react-native-slide-to-unlock';
@@ -12,7 +12,7 @@ import { redirectToMaps } from '../utilities/externalLink';
 export default function SingleRoute({ route, navigation }: any) {
     const { completeOrder, confirmCancelOrder, currentPosition } = useApp();
     
-    const order: DeliveryOrder = route.params.order;
+    const [order, setOrder] = useState<DeliveryOrder>(route.params.order);
 
     const destination: any = {
         coordinates: { latitude: +order.latitude, longitude: +order.longitude },
@@ -23,7 +23,9 @@ export default function SingleRoute({ route, navigation }: any) {
     function handleSwipeGesture() {
         completeOrder(order)
             .then(() => {
-                navigation.goBack(); // TODO: get itienrary, find, open next delivery
+                const completedOrder = {...order, delivery_status_id: DeliveryStatus.COMPLETED.id };
+                setOrder(completedOrder)
+                navigation.navigate('signature', { order: completedOrder });
             })
             .catch(console.log);
     }

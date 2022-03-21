@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Caption, Divider, Headline, Paragraph } from "react-native-paper";
 import { parseDateTimeSeconds } from "../utilities/datetime";
 
@@ -10,6 +10,7 @@ export default function OrderDetails({ route, navigation }: any) {
         <ScrollView style={styles.container}>
             { order.sales_order_id == null && 
                 <>
+                    <View style={{ marginTop: 30 }} />
                     <Headline style={styles.centerText}>Custom Delivery Order</Headline>
                     <View style={styles.section}>
                         <Caption style={styles.centerText}>Delivery Address</Caption>
@@ -27,6 +28,12 @@ export default function OrderDetails({ route, navigation }: any) {
                         <Caption style={styles.centerText}>Completed At</Caption>
                         <Paragraph style={styles.centerText}>{order.deliver_at ? parseDateTimeSeconds(order.deliver_at) : '-'}</Paragraph>
                     </View>
+            
+                    { order.signature && 
+                        <View style={{ display: 'flex', alignItems: 'center' }}>
+                            <Image style={{ resizeMode: "contain",  width: 200, height: 200 }} source={{ uri: order.signature }}/>
+                        </View>
+                    }
                 </>
             }
 
@@ -62,6 +69,12 @@ export default function OrderDetails({ route, navigation }: any) {
                         <Caption style={styles.centerText}>Completed At</Caption>
                         <Paragraph style={styles.centerText}>{order.deliver_at ? parseDateTimeSeconds(order.deliver_at) : '-'}</Paragraph>
                     </View>
+            
+                    { order.signature && 
+                        <View style={{ display: 'flex', alignItems: 'center' }}>
+                            <Image style={{ resizeMode: "contain",  width: 200, height: 200 }} source={{ uri: order.signature }}/>
+                        </View>
+                    }
 
                     <View style={styles.section} />
                     <Divider />

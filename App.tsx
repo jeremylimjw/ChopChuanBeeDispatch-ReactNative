@@ -10,6 +10,7 @@ import Home from './components/Home';
 import NavigationBar from './components/NavigationBar';
 import SingleRoute from './components/SingleRoute';
 import Profile from './components/Profile';
+import Signature from './components/Signature';
 
 
 export default function App() {
@@ -27,6 +28,18 @@ export default function App() {
         }
       },
     }, 
+    {
+      name: "profile",
+      component: Profile,
+      options: { 
+        headerTitle: "Profile",
+        hideProfile: true,
+        header: (props: any) => {
+          return <NavigationBar {...props} />
+        },
+        ...TransitionPresets.ModalSlideFromBottomIOS,
+      },
+    },
     {
       name: "routeOverview",
       component: RouteOverview,
@@ -62,10 +75,10 @@ export default function App() {
       },
     }, 
     {
-      name: "profile",
-      component: Profile,
+      name: "signature",
+      component: Signature,
       options: { 
-        headerTitle: "Profile",
+        headerTitle: "Complete Delivery",
         hideProfile: true,
         header: (props: any) => {
           return <NavigationBar {...props} />

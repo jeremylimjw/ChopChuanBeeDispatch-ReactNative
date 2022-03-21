@@ -35,6 +35,8 @@ export default function RouteOverview({ route, navigation }: any) {
 
 function MapOverview({ itinerary }: any) {
 
+  const lastDeliveryOrder = itinerary?.delivery_orders[itinerary?.delivery_orders.length - 1];
+
   return (
     <>
       { (itinerary && itinerary.delivery_orders.length != null) &&
@@ -46,7 +48,7 @@ function MapOverview({ itinerary }: any) {
           }))} 
           directions={{
             origin: { longitude: +itinerary?.longitude, latitude: +itinerary?.latitude },
-            destination: { longitude: +itinerary?.longitude, latitude: +itinerary?.latitude },
+            destination: { longitude: +lastDeliveryOrder?.longitude, latitude: +lastDeliveryOrder?.latitude },
             waypoints: itinerary?.delivery_orders.map((x: DeliveryOrder) => ({ longitude: +x.longitude, latitude: +x.latitude }))
           }} 
         />

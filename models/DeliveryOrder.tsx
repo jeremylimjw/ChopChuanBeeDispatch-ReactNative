@@ -8,6 +8,7 @@ export interface DeliveryOrder {
     address: string;
     postal_code: string;
     qr_code: any;
+    signature: any;
     remarks: string;
     sales_order?: {
         id: string;
