@@ -1,5 +1,5 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { Button, Caption, Divider, Headline, Paragraph, Subheading } from "react-native-paper";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { Caption, Divider, Headline, Paragraph } from "react-native-paper";
 import { parseDateTimeSeconds } from "../utilities/datetime";
 
 

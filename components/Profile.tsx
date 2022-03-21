@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Avatar, Button, Caption, Headline, List, Paragraph } from 'react-native-paper';
+import { Avatar, Caption, Headline, Paragraph } from 'react-native-paper';
 import { getRole } from '../enums/Role';
 import { useApp } from '../providers/AppProvider';
 
