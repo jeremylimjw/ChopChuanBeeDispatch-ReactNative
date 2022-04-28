@@ -3,7 +3,7 @@ import { Dimensions, StyleSheet, View } from 'react-native';
 import { useApp } from '../providers/AppProvider';
 import MapViewDirections from 'react-native-maps-directions';
 
-const GOOGLE_MAPS_APIKEY = 'AIzaSyDnOE-lFQV3l5JWLE9bRnMiv1Ext8puGsY';
+const GOOGLE_MAPS_APIKEY = '<INSERT API KEY HERE>';
 
 
 export default function Map({ markers, directions }: any) {
